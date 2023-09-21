@@ -31,7 +31,9 @@ app.Run();
 
 void InitializeBusinessRules(IServiceCollection services)
 {
-    services.AddTransient<IDbHelper, DbHelper>();
+    AppContext.SetSwitch("Npgsql.EnableStoredProcedureCompatMode", true);
+    services.AddTransient<DbHelper>();
+    services.AddTransient<IDbServiceHelper, DbServiceHelper>();
     services.AddTransient<IGameService, GameService>();
     services.AddTransient<IMomoHelper, MomoHelper>();
     services.AddTransient<ISmsHelper, SmsHelper>();

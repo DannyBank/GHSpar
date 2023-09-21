@@ -1,5 +1,6 @@
 ﻿using GHSpar.Abstractions;
 using GHSpar.Models;
+using GHSpar.Models.Db;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -10,12 +11,12 @@ namespace GHSpar.Controllers
     public class AccountController : ControllerBase
     {
         public readonly ILogger<AccountController> _logger;
-        public readonly IDbHelper _dbHelper;
+        public readonly IDbServiceHelper _dbHelper;
         public readonly ISmsHelper _smsHelper;
         public readonly AppSettings _appSettings;
         public readonly AppStrings _appStrings;
 
-        public AccountController(ILogger<AccountController> logger, IDbHelper dbHelper, ISmsHelper smsHelper, 
+        public AccountController(ILogger<AccountController> logger, IDbServiceHelper dbHelper, ISmsHelper smsHelper, 
             IOptionsSnapshot<AppSettings> appSettings, IOptionsSnapshot<AppStrings> appStrings)
         {
             _logger = logger;
@@ -65,6 +66,16 @@ namespace GHSpar.Controllers
             return new ApiResponse(StatusCodes.Status200OK, $"GetByUsernameMsisdn Successful for {username}", data);
         }
 
+        [HttpGet("get/{username}/{msisdn}/{pin}")]
+        public async Task<ApiResponse> GetByUsernameMsisdnPin(string username, string msisdn, string pin)
+        {
+            if (!ModelState.IsValid)
+                return new ApiResponse(StatusCodes.Status400BadRequest, "Bad Request", null!);
+
+            var data = await _dbHelper.GetAccountByUsernameMsisdnPin(username, msisdn, pin);
+            return new ApiResponse(StatusCodes.Status200OK, $"GetByUsernameMsisdn Successful for {username}", data);
+        }
+
         [HttpPost("lock")]
         public async Task<ApiResponse> LockAccount([FromBody] PlayerAccount playerAccount)
         {
@@ -89,12 +100,12 @@ namespace GHSpar.Controllers
                 return new ApiResponse(StatusCodes.Status500InternalServerError, "Phone Number already exists", null!);
 
             int otp = new Random().Next(10000, 99999);
-            var otpResult = await _dbHelper.AddOtp(otp, msisdn);
+            var otpResult = await _dbHelper.RecordOtp(otp, msisdn);
             if (otpResult is null)
                 return new ApiResponse(StatusCodes.Status500InternalServerError, "OTP operation failed", null!);
 
             var sendResult = await _smsHelper.SendSms(
-                new SmsModel { Msisdn = msisdn, Message = $"{otpResult.Number} is you OTP", Origin = _appSettings.Origin});
+                new SmsModel { Msisdn = msisdn, Message = $"{otpResult.Otp} is you OTP", Origin = _appSettings.Origin});
             return new ApiResponse(StatusCodes.Status200OK, $"SendOtp Successful for {username}", sendResult);
         }
 
@@ -111,7 +122,7 @@ namespace GHSpar.Controllers
             var foundOtp = await _dbHelper.GetOtp(otp, msisdn);
             if (foundOtp is null)
                 return new ApiResponse(StatusCodes.Status500InternalServerError, "OTP was not found", null!);
-            if (!foundOtp.Number.Equals(otp))
+            if (!foundOtp.Otp.Equals(otp))
                 return new ApiResponse(StatusCodes.Status500InternalServerError, "OTP mismatch, please try again", null!);
 
             if (player?.Status is PlayerStatus.UNCOMPLETED)

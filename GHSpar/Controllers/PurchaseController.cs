@@ -1,5 +1,6 @@
 ﻿using GHSpar.Abstractions;
 using GHSpar.Models;
+using GHSpar.Models.Db;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -11,13 +12,13 @@ namespace GHSpar.Controllers
     public class PurchaseController : ControllerBase
     {
         public readonly ILogger<PurchaseController> _logger;
-        public readonly IDbHelper _dbHelper;
+        public readonly IDbServiceHelper _dbHelper;
         public readonly ISmsHelper _smsHelper;
         public readonly IMomoHelper _momoHelper;
         public readonly AppSettings _appSettings;
         public readonly AppStrings _appStrings;
 
-        public PurchaseController(ILogger<PurchaseController> logger, IDbHelper dbHelper, 
+        public PurchaseController(ILogger<PurchaseController> logger, IDbServiceHelper dbHelper, 
             ISmsHelper smsHelper, IMomoHelper momoHelper,IOptionsSnapshot<AppSettings> appSettings, IOptionsSnapshot<AppStrings> appStrings)
         {
             _logger = logger;
@@ -34,7 +35,7 @@ namespace GHSpar.Controllers
             if (!ModelState.IsValid)
                 return new ApiResponse(StatusCodes.Status400BadRequest, "Bad Request", null!);
 
-            var result = await _dbHelper.AddCoinPurchaseRequest(purchaseRequest);
+            var result = await _dbHelper.CoinPurchaseRequest(purchaseRequest);
             if (result is null)
                 return new ApiResponse(StatusCodes.Status500InternalServerError, "Purchase Request Failed", null!);
 

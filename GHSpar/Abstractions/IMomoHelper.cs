@@ -1,4 +1,4 @@
-﻿using GHSpar.Models;
+﻿using GHSpar.Models.Db;
 
 namespace GHSpar.Abstractions
 {

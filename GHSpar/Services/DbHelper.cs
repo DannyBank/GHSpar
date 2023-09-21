@@ -1,92 +1,37 @@
-﻿using GHSpar.Abstractions;
-using GHSpar.Models;
+﻿using Npgsql;
+using System.Data;
+using System.Diagnostics;
 
 namespace GHSpar.Services
 {
-    public class DbHelper : IDbHelper
+    public class DbHelper 
     {
-        public async Task<PurchaseRequest> AddCoinPurchaseRequest(PurchaseRequest playerAccount)
+        private readonly IConfiguration _configuration;
+        private readonly ILogger<DbHelper> _logger;
+
+        public DbHelper(IConfiguration configuration, ILogger<DbHelper> logger)
         {
-            throw new NotImplementedException();
+            _configuration = configuration;
+            _logger = logger;
+        }
+        public NpgsqlCommand CreateCommand(string commandName, string connectionStr = "")
+        {
+            connectionStr = _configuration.GetConnectionString(string.IsNullOrWhiteSpace(connectionStr) ? "Database" : connectionStr);
+            var connection = new NpgsqlConnection(connectionStr);
+            var command = new NpgsqlCommand(commandName, connection)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+            return command;
         }
 
-        public async Task<OTPModel> AddOtp(int otp, string msisdn)
+        [DebuggerHidden]
+        public IDbConnection CreateConnection(string connectionStr = "")
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task<PlayerAccount> CreateAccount(PlayerAccount playerAccount)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<PlayerAccount> GetAccountByMsisdn(string msisdn)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<PlayerAccount> GetAccountByUsername(string username)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<PlayerAccount> GetAccountByUsernameAndMsisdn(string username, string msisdn)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<List<PlayerHistory>> GetAllPlayerHistoryByPlayer(string username, string msisdn)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<OTPModel> GetOtp(string otp, string msisdn)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<PlayerAccount> LockAccount(PlayerAccount playerAccount)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<CardPlay> RecordCardPlayed(CardPlay round)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PlayingRound> RecordMatchWinner(PlayingRound round)
-        {
-            if (round.Id != 5) return null!; // to make sure it's the last round
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> RecordPlaceBet(long playerid, long matchid, decimal amount)
-        {
-            //deduct player's coin
-            //record deduction in player history
-            //record addition in game history
-            throw new NotImplementedException();
-        }
-
-        public Task<PlayingRound> RecordRoundWinner(PlayingRound round)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<PlayerAccount> UpdateAccount(PlayerAccount? player)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<PlayerHistory> UpdatePlayerHistory(PlayerHistory playerHistory)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<TransactionHistory> UpdateTransactionHistory(TransactionHistory transactionHistory)
-        {
-            throw new NotImplementedException();
+            connectionStr = _configuration.GetConnectionString(string.IsNullOrWhiteSpace(connectionStr) ? "Database" : connectionStr);
+            var connection = new NpgsqlConnection(connectionStr);
+            _logger.LogTrace("Connection to {ConnStr}  was {Status}", connection.ConnectionString, connection.State);
+            return connection;
         }
     }
 }

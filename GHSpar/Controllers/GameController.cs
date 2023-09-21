@@ -1,5 +1,6 @@
 ﻿using GHSpar.Abstractions;
 using GHSpar.Models;
+using GHSpar.Models.Db;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -10,13 +11,13 @@ namespace GHSpar.Controllers
     public class GameController : ControllerBase
     {
         public readonly ILogger<GameController> _logger;
-        public readonly IDbHelper _dbHelper;
+        public readonly IDbServiceHelper _dbHelper;
         public readonly ISmsHelper _smsHelper;
         public readonly AppSettings _appSettings;
         public readonly AppStrings _appStrings;
         public readonly IGameService _gameService;
 
-        public GameController(ILogger<GameController> logger, IDbHelper dbHelper, ISmsHelper smsHelper,
+        public GameController(ILogger<GameController> logger, IDbServiceHelper dbHelper, ISmsHelper smsHelper,
             IOptionsSnapshot<AppSettings> appSettings, IOptionsSnapshot<AppStrings> appStrings, IGameService gameService)
         {
             _logger = logger;
@@ -33,7 +34,21 @@ namespace GHSpar.Controllers
             if (!ModelState.IsValid)
                     return new ApiResponse(StatusCodes.Status400BadRequest, "Bad Request", null!);
 
-            var generatedMatch = await _gameService.CreateMatch(players, playerid);
+            var game = new GameMatch
+            {
+                Active = true,
+                CurrentPlayers = 0,
+                DateCreated = DateTime.Now,
+                RequiredPlayers = players
+            };
+            var gameDeets = new GameMatchDetail
+            {
+                Amount = 0,
+                DateJoined = DateTime.Now,
+                PlayerId = playerid,
+                PlayerName = ""
+            };
+            var generatedMatch = await _gameService.CreateMatch(game, gameDeets);
             return new ApiResponse(StatusCodes.Status200OK, "Game Created/Joined", generatedMatch);
         }
 
@@ -82,7 +97,7 @@ namespace GHSpar.Controllers
             return new ApiResponse(StatusCodes.Status200OK, "Player card play recorded successfully", playHistory);
         }
 
-        [HttpPost("play/log/round/winner")]
+        [HttpPost("record/winner/round")]
         public async Task<ApiResponse> RecordRoundWinner([FromBody] PlayingRound round)
         {
             if (!ModelState.IsValid)
@@ -94,12 +109,14 @@ namespace GHSpar.Controllers
             return new ApiResponse(StatusCodes.Status200OK, "Player round win recorded successfully", result);
         }
 
-        [HttpPost("play/log/match/winner")]
+        [HttpPost("record/winner/match")]
         public async Task<ApiResponse> RecordMatchWinner([FromBody] PlayingRound round)
         {
             if (!ModelState.IsValid)
                 return new ApiResponse(StatusCodes.Status400BadRequest, "Bad Request", null!);
 
+            if (round.Round != 5)
+                return new ApiResponse(StatusCodes.Status500InternalServerError, $"Invalid round {round.Round} to declare winner", null!);
             var result = await _dbHelper.RecordMatchWinner(round);
             if (result is null)
                 return new ApiResponse(StatusCodes.Status500InternalServerError, "An error occurred", null!);
@@ -112,8 +129,20 @@ namespace GHSpar.Controllers
             if (!ModelState.IsValid)
                 return new ApiResponse(StatusCodes.Status400BadRequest, "Bad Request", null!);
 
-            var result = await _dbHelper.RecordPlaceBet(playerid, matchid, amount);
+            var result = await _dbHelper.RecordPlacedBet(playerid, matchid, amount);
             if (!result)
+                return new ApiResponse(StatusCodes.Status500InternalServerError, "An error occurred", null!);
+            return new ApiResponse(StatusCodes.Status200OK, "Player round win recorded successfully", result);
+        }
+
+        [HttpPost("record/player/cards")]
+        public async Task<ApiResponse> RecordPlayersCards([FromBody] List<PlayerHand> players)
+        {
+            if (!ModelState.IsValid)
+                return new ApiResponse(StatusCodes.Status400BadRequest, "Bad Request", null!);
+
+            var result = await _dbHelper.RecordCardsAssigned(players);
+            if (result is null)
                 return new ApiResponse(StatusCodes.Status500InternalServerError, "An error occurred", null!);
             return new ApiResponse(StatusCodes.Status200OK, "Player round win recorded successfully", result);
         }

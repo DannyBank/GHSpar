@@ -1,4 +1,4 @@
-﻿namespace GHSpar.Models
+﻿namespace GHSpar.Models.Db
 {
     public class PlayerBet
     {

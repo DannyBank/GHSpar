@@ -13,9 +13,9 @@ namespace GHSpar.Controllers
         public readonly ILogger<GameController> _logger;
         public readonly IDbServiceHelper _dbHelper;
         public readonly ISmsHelper _smsHelper;
+        public readonly IGameService _gameService;
         public readonly AppSettings _appSettings;
         public readonly AppStrings _appStrings;
-        public readonly IGameService _gameService;
 
         public GameController(ILogger<GameController> logger, IDbServiceHelper dbHelper, ISmsHelper smsHelper,
             IOptionsSnapshot<AppSettings> appSettings, IOptionsSnapshot<AppStrings> appStrings, IGameService gameService)
@@ -32,7 +32,7 @@ namespace GHSpar.Controllers
         public async Task<ApiResponse> CreateMatch(int players, long playerid)
         {
             if (!ModelState.IsValid)
-                    return new ApiResponse(StatusCodes.Status400BadRequest, "Bad Request", null!);
+                return new ApiResponse(StatusCodes.Status400BadRequest, "Bad Request", null!);
 
             var game = new GameMatch
             {

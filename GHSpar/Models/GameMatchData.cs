@@ -1,17 +1,12 @@
-﻿namespace GHSpar.Models.Db
+﻿namespace GHSpar.Models
 {
-    public class GameMatch
+    public class GameMatchData
     {
         public long Id { get; set; }
         public DateTime DateCreated { get; set; }
         public int RequiredPlayers { get; set; }
         public int CurrentPlayers { get; set; }
         public bool Active { get; set; }
-        public HashSet<GameMatchDetail> MatchDetails { get; set; }
-    }
-
-    public class GameMatchDetail
-    {
         public long DetailId { get; set; }
         public long MatchId { get; set; }
         public long PlayerId { get; set; }

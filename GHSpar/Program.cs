@@ -1,40 +1,14 @@
-using GHSpar.Abstractions;
-using GHSpar.Services;
+using GHSpar;
+using Microsoft.AspNetCore;
 
-var builder = WebApplication.CreateBuilder(args);
+BuildWebHost(args).Run();
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-InitializeBusinessRules(builder.Services);
-
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+IWebHost BuildWebHost(string[] args)
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
-
-void InitializeBusinessRules(IServiceCollection services)
-{
-    AppContext.SetSwitch("Npgsql.EnableStoredProcedureCompatMode", true);
-    services.AddTransient<DbHelper>();
-    services.AddTransient<IDbServiceHelper, DbServiceHelper>();
-    services.AddTransient<IGameService, GameService>();
-    services.AddTransient<IMomoHelper, MomoHelper>();
-    services.AddTransient<ISmsHelper, SmsHelper>();
+    return WebHost.CreateDefaultBuilder(args)
+        .UseStartup<Startup>()
+        .ConfigureAppConfiguration((hostingContext, config) =>
+        {
+            config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+        }).Build();
 }

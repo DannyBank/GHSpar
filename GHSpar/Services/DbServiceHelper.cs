@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using GHSpar.Abstractions;
+using GHSpar.Models;
 using GHSpar.Models.Db;
 using System.Data;
 
@@ -21,6 +22,7 @@ namespace GHSpar.Services
             using var connection = _dbHelper.CreateConnection();
             var data = await connection.QueryFirstOrDefaultAsync<PurchaseRequest>("createpurchaserequest",
                 new {
+                    playerid = playerAccount.PlayerId,
                     playername = playerAccount.PlayerName,
                     sparcoins = playerAccount.AmountCoins,
                     amountghs = playerAccount.AmountGHS,
@@ -58,6 +60,14 @@ namespace GHSpar.Services
         public async Task<PlayerAccount> GetAccountByUsername(string username)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<PlayerAccount> GetAccountByUsernameAndPin(string username, string pin)
+        {
+            using var connection = _dbHelper.CreateConnection();
+            var data = await connection.QueryFirstOrDefaultAsync<PlayerAccount>("getplayerbynamepin",
+                new { username, pin }, commandType: CommandType.StoredProcedure);
+            return data;
         }
 
         public async Task<PlayerAccount> GetAccountByUsernameAndMsisdn(string username, string msisdn)
@@ -156,11 +166,11 @@ namespace GHSpar.Services
             return data;
         }
 
-        public async Task<GameMatch> CreateMatch(
+        public async Task<List<GameMatchData>> CreateMatch(
             long playerId, string playerName, DateTime dateCreated, DateTime dateJoined, int requiredPlayers, decimal amountGHS)
         {
             using var connection = _dbHelper.CreateConnection();
-            var data = await connection.QueryFirstOrDefaultAsync<GameMatch>("creategamematch",
+            var data = await connection.QueryAsync<GameMatchData>("creategamematch",
                 new
                 {
                     playerid = playerId,
@@ -170,7 +180,7 @@ namespace GHSpar.Services
                     requiredplayers = requiredPlayers,
                     amount = amountGHS
                 }, commandType: CommandType.StoredProcedure);
-            return data;
+            return data.ToList();
         }
 
         public async Task<GameMatchDetail> GetMatchDetailByPlayer(long playerId)
@@ -181,10 +191,10 @@ namespace GHSpar.Services
             return data;
         }
 
-        public async Task<GameMatchDetail> GetMatchDetailByMatch(long matchId)
+        public async Task<GameMatch> GetMatchDetailByMatch(long matchId)
         {
             using var connection = _dbHelper.CreateConnection();
-            var data = await connection.QueryFirstOrDefaultAsync<GameMatchDetail>(
+            var data = await connection.QueryFirstOrDefaultAsync<GameMatch>(
                 "getgamematchdetails", new { matchid = matchId }, commandType: CommandType.StoredProcedure);
             return data;
         }

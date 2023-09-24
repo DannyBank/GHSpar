@@ -1,4 +1,7 @@
-﻿namespace GHSpar.Models.Db
+﻿
+using System.Text.Json.Serialization;
+
+namespace GHSpar.Models.Db
 {
     public class PlayerAccount
     {
@@ -7,6 +10,5 @@
         public string Msisdn { get; set; } = string.Empty;
         public string Pin { get; set; } = string.Empty;
         public PlayerStatus Status { get; set; }
-        public HashSet<Card> Hand { get; set; } = null!;
     }
 }

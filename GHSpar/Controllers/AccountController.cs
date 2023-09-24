@@ -56,7 +56,7 @@ namespace GHSpar.Controllers
             return new ApiResponse(StatusCodes.Status200OK, $"GetByMsisdn Successful for {msisdn}", data);
         }
 
-        [HttpGet("get/{username}/{msisdn}")]
+        [HttpGet("get/username/{username}/msisdn/{msisdn}")]
         public async Task<ApiResponse> GetByUsernameMsisdn(string username, string msisdn)
         {
             if (!ModelState.IsValid)
@@ -73,6 +73,16 @@ namespace GHSpar.Controllers
                 return new ApiResponse(StatusCodes.Status400BadRequest, "Bad Request", null!);
 
             var data = await _dbHelper.GetAccountByUsernameMsisdnPin(username, msisdn, pin);
+            return new ApiResponse(StatusCodes.Status200OK, $"GetByUsernameMsisdn Successful for {username}", data);
+        }
+
+        [HttpGet("get/username/{username}/pin/{pin}")]
+        public async Task<ApiResponse> GetByUsernamePin(string username, string pin)
+        {
+            if (!ModelState.IsValid)
+                return new ApiResponse(StatusCodes.Status400BadRequest, "Bad Request", null!);
+
+            var data = await _dbHelper.GetAccountByUsernameAndPin(username, pin);
             return new ApiResponse(StatusCodes.Status200OK, $"GetByUsernameMsisdn Successful for {username}", data);
         }
 

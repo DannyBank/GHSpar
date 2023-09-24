@@ -5,6 +5,6 @@ namespace GHSpar.Abstractions
     public interface IGameService
     {
         Task<GameMatch> CreateMatch(GameMatch gameMatch, GameMatchDetail matchDetail);
-        Task<GameMatchDetail> GetMatch(long matchId);
+        Task<GameMatch> GetMatch(long matchId);
     }
 }

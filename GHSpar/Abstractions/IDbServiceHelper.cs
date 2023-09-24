@@ -1,4 +1,5 @@
-﻿using GHSpar.Models.Db;
+﻿using GHSpar.Models;
+using GHSpar.Models.Db;
 
 namespace GHSpar.Abstractions
 {
@@ -10,6 +11,7 @@ namespace GHSpar.Abstractions
         Task<PlayerAccount> GetAccountByMsisdn(string msisdn);
         Task<PlayerAccount> GetAccountByUsername(string username);
         Task<PlayerAccount> GetAccountByUsernameAndMsisdn(string username, string msisdn);
+        Task<PlayerAccount> GetAccountByUsernameAndPin(string username, string pin);
         Task<PlayerAccount> GetAccountByUsernameMsisdnPin(string username, string msisdn, string pin);
         Task<List<PlayerHistory>> GetAllPlayerHistoryByPlayer(string username, string msisdn);
         Task<OTPModel> GetOtp(string otp, string msisdn);
@@ -21,9 +23,9 @@ namespace GHSpar.Abstractions
         Task<PlayerAccount> UpdateAccount(PlayerAccount? player);
         Task<PlayerHistory> UpdatePlayerHistory(PlayerHistory playerHistory);
         Task<TransactionHistory> UpdateTransactionHistory(TransactionHistory transactionHistory);
-        Task<GameMatch> CreateMatch(long playerId, string playerName, DateTime dateCreated, DateTime dateJoined, int requiredPlayers, decimal amountGHS);
+        Task<List<GameMatchData>> CreateMatch(long playerId, string playerName, DateTime dateCreated, DateTime dateJoined, int requiredPlayers, decimal amountGHS);
         Task<GameMatchDetail> GetMatchDetailByPlayer(long playerId);
-        Task<GameMatchDetail> GetMatchDetailByMatch(long matchId);
+        Task<GameMatch> GetMatchDetailByMatch(long matchId);
         Task<List<PlayerHand>> RecordCardsAssigned(List<PlayerHand> players);
     }
 }

@@ -115,7 +115,7 @@ namespace GHSpar.Services
             {
                 round = round.Round,
                 matchid = round.MatchId,
-                daterecorded = round.DateRecorded,
+                daterecorded = DateTime.Now,
                 winner = round.Winner
             }, commandType: CommandType.StoredProcedure);
             return data;
@@ -129,7 +129,7 @@ namespace GHSpar.Services
             {
                 round = round.Round,
                 matchid = round.MatchId,
-                daterecorded = round.DateRecorded,
+                daterecorded = DateTime.Now,
                 winner = round.Winner
             }, commandType: CommandType.StoredProcedure);
             return data;
@@ -219,6 +219,24 @@ namespace GHSpar.Services
                 }
             }
             return playerData;
+        }
+
+        public async Task<SmsModel> Queue(SmsModel input)
+        {
+            using var connection = _dbHelper.CreateConnection();
+            var data = await connection.QueryFirstOrDefaultAsync<SmsModel>(
+                "queuesms", new { msisdn = input.Msisdn, message = input.Message, origin = input.Origin }, 
+                commandType: CommandType.StoredProcedure);
+            return data;
+        }
+
+        public async Task<SmsModel> Schedule(SmsModel input)
+        {
+            using var connection = _dbHelper.CreateConnection();
+            var data = await connection.QueryFirstOrDefaultAsync<SmsModel>(
+                "schedulesms", new { msisdn = input.Msisdn, message = input.Message, origin = input.Origin }, 
+                commandType: CommandType.StoredProcedure);
+            return data;
         }
     }
 }

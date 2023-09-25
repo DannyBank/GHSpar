@@ -4,6 +4,7 @@ namespace GHSpar.Abstractions
 {
     public interface ISmsHelper
     {
-        Task<SmsModel> SendSms(SmsModel smsModel);
+        Task<SmsModel> Queue(SmsModel input);
+        Task<SmsModel> Schedule(SmsModel input);
     }
 }

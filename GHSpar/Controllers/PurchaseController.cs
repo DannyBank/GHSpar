@@ -1,7 +1,6 @@
 ﻿using GHSpar.Abstractions;
 using GHSpar.Models;
 using GHSpar.Models.Db;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 

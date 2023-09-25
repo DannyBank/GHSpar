@@ -7,7 +7,7 @@ namespace GHSpar.Models.Db
         [JsonProperty(nameof(MatchId))]
         public long MatchId { get; set; }
 
-        [JsonProperty(nameof(MatchId))]
+        [JsonProperty(nameof(PlayerId))]
         public long PlayerId { get; set; }
 
         [JsonProperty(nameof(Hands))]

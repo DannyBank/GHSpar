@@ -27,5 +27,7 @@ namespace GHSpar.Abstractions
         Task<GameMatchDetail> GetMatchDetailByPlayer(long playerId);
         Task<GameMatch> GetMatchDetailByMatch(long matchId);
         Task<List<PlayerHand>> RecordCardsAssigned(List<PlayerHand> players);
+        Task<SmsModel> Queue(SmsModel input);
+        Task<SmsModel> Schedule(SmsModel input);
     }
 }

@@ -5,14 +5,23 @@ namespace GHSpar.Services
 {
     public class SmsHelper : ISmsHelper
     {
-        public async Task<SmsModel> SendSms(OTPModel otpResult)
+        private IDbServiceHelper _dbServiceHelper;
+
+        public SmsHelper(IDbServiceHelper dbServiceHelper)
         {
-            return await Task.FromResult(new SmsModel());
+            _dbServiceHelper = dbServiceHelper;
         }
 
-        public Task<SmsModel> SendSms(SmsModel smsModel)
+        public async Task<SmsModel?> Queue(SmsModel input)
         {
-            throw new NotImplementedException();
+            if (input == null) return null;
+            return await _dbServiceHelper.Queue(input);
+        }
+
+        public async Task<SmsModel?> Schedule(SmsModel input)
+        {
+            if (input == null) return null;
+            return await _dbServiceHelper.Schedule(input);
         }
     }
 }

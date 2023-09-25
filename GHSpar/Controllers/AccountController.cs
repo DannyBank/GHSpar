@@ -114,7 +114,7 @@ namespace GHSpar.Controllers
             if (otpResult is null)
                 return new ApiResponse(StatusCodes.Status500InternalServerError, "OTP operation failed", null!);
 
-            var sendResult = await _smsHelper.SendSms(
+            var sendResult = await _smsHelper.Queue(
                 new SmsModel { Msisdn = msisdn, Message = $"{otpResult.Otp} is you OTP", Origin = _appSettings.Origin});
             return new ApiResponse(StatusCodes.Status200OK, $"SendOtp Successful for {username}", sendResult);
         }

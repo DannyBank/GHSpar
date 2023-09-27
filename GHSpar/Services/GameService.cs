@@ -51,5 +51,38 @@ namespace GHSpar.Services
         {
             return await _dbSvc.GetMatchDetailByMatch(matchId);
         }
+
+        public async Task<List<GameMatch>> GetMatchByPlayers(int playercount)
+        {
+            var games = await _dbSvc.GetMatchDetailByPlayers(playercount);
+            var combinedGameMatches = games
+                .GroupBy(match => new
+                {
+                    match.Id,
+                    match.DateCreated,
+                    match.RequiredPlayers,
+                    match.CurrentPlayers,
+                    match.Active
+                })
+                .Select(group => new GameMatch
+                {
+                    Id = group.Key.Id,
+                    DateCreated = group.Key.DateCreated,
+                    RequiredPlayers = group.Key.RequiredPlayers,
+                    CurrentPlayers = group.Key.CurrentPlayers,
+                    Active = group.Key.Active,
+                    MatchDetails = new HashSet<GameMatchDetail>(group.Select(match => new GameMatchDetail
+                    {
+                        DetailId = match.DetailId,
+                        MatchId = match.MatchId,
+                        PlayerId = match.PlayerId,
+                        PlayerName = match.PlayerName,
+                        Amount = match.Amount,
+                        DateJoined = match.DateJoined
+                    }))
+                })
+                .ToList();
+            return combinedGameMatches;
+        }
     }
 }

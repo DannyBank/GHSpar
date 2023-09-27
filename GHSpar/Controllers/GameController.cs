@@ -62,6 +62,16 @@ namespace GHSpar.Controllers
             return new ApiResponse(StatusCodes.Status200OK, $"Game {matchid} found", match);
         }
 
+        [HttpGet("match/by/players/{playercount}")]
+        public async Task<ApiResponse> GetMatch(int playercount)
+        {
+            if (!ModelState.IsValid)
+                return new ApiResponse(StatusCodes.Status400BadRequest, "Bad Request", null!);
+
+            var matches = await _gameService.GetMatchByPlayers(playercount);
+            return new ApiResponse(StatusCodes.Status200OK, $"{matches.Count} match(es) found", matches);
+        }
+
         [HttpGet("check/play/{reqcoins}/{username}/{msisdn}")]
         public async Task<ApiResponse> CheckPlayerForGame(string reqcoins, string username, string msisdn)
         {

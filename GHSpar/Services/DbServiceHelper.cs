@@ -238,5 +238,13 @@ namespace GHSpar.Services
                 commandType: CommandType.StoredProcedure);
             return data;
         }
+
+        public async Task<List<GameMatchData>> GetMatchDetailByPlayers(int playercount)
+        {
+            using var connection = _dbHelper.CreateConnection();
+            var data = await connection.QueryAsync<GameMatchData>("getmatchbyplayers",
+                new { playercount }, commandType: CommandType.StoredProcedure);
+            return data.ToList();
+        }
     }
 }

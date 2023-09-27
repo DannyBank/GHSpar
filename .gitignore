@@ -2,3 +2,6 @@
 .vs
 GHSpar/bin
 GHSpar/obj
+/GHSpar.SocketServer/bin
+/GHSpar.SocketServer/obj
+/GHSpar.SocketServer/Properties/PublishProfiles

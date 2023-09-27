@@ -1,4 +1,5 @@
-﻿using GHSpar.Models.Db;
+﻿using GHSpar.Models;
+using GHSpar.Models.Db;
 
 namespace GHSpar.Abstractions
 {
@@ -6,5 +7,6 @@ namespace GHSpar.Abstractions
     {
         Task<GameMatch> CreateMatch(GameMatch gameMatch, GameMatchDetail matchDetail);
         Task<GameMatch> GetMatch(long matchId);
+        Task<List<GameMatch>> GetMatchByPlayers(int playercount);
     }
 }

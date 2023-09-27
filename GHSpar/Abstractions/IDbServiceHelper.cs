@@ -29,5 +29,6 @@ namespace GHSpar.Abstractions
         Task<List<PlayerHand>> RecordCardsAssigned(List<PlayerHand> players);
         Task<SmsModel> Queue(SmsModel input);
         Task<SmsModel> Schedule(SmsModel input);
+        Task<List<GameMatchData>> GetMatchDetailByPlayers(int playercount);
     }
 }

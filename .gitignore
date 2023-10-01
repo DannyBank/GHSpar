@@ -5,3 +5,11 @@ GHSpar/obj
 /GHSpar.SocketServer/bin
 /GHSpar.SocketServer/obj
 /GHSpar.SocketServer/Properties/PublishProfiles
+/packages
+/SocketServer/SocketIOSharp/bin/Debug
+/SocketServer/SocketIOSharp/obj
+/SocketServer/SocketIOSharp-Client/bin/Debug
+/SocketServer/SocketIOSharp-Client/obj/Debug
+/SocketServer/SocketIOSharp-Server/bin/Debug
+/SocketServer/SocketIOSharp-Server/obj/Debug
+/SocketServer

@@ -63,7 +63,7 @@ namespace GHSpar.SocketServer
                 if (result is null) { return; }
                 var bytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(result));
                 foreach (ConnectionWSServer connection in server.Connections)
-                    connection.Websocket.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);                
+                    connection.Websocket.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
 
                 Console.WriteLine($"{DateTime.Now}: OnMessageEvent triggered, Message: {args.Message}");
             }

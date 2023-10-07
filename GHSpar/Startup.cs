@@ -38,6 +38,7 @@ namespace GHSpar
             app.UseRouting();
             app.UseEndpoints(endpoint => { endpoint.MapControllers(); });
             _logger.LogInformation("Application Middleware Loaded");
+            app.UseMiddleware<RequestResponseLoggingMiddleware>();
         }
     }
 }
